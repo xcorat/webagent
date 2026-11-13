@@ -1,0 +1,24 @@
+/* Dark theme: neutral obsidian, crisp sans-serif, balanced radii */
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --color-background: oklch(0.145 0 0);
+  --color-foreground: oklch(0.985 0 0);
+  --color-card: oklch(0.18 0 0);
+  --color-card-foreground: oklch(0.985 0 0);
+  --color-primary: oklch(0.92 0 0);
+  --color-primary-foreground: oklch(0.18 0 0);
+  --color-secondary: oklch(0.24 0 0);
+  --color-secondary-foreground: oklch(0.985 0 0);
+  --color-muted: oklch(0.24 0 0);
+  --color-muted-foreground: oklch(0.68 0 0);
+  --color-accent: oklch(0.24 0 0);
+  --color-accent-foreground: oklch(0.985 0 0);
+  --color-destructive: oklch(0.63 0.22 25);
+  --color-destructive-foreground: oklch(0.985 0 0);
+  --color-border: oklch(0.28 0 0);
+  --color-input: oklch(0.28 0 0);
+  --color-ring: oklch(0.50 0 0);
+
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.35);
+}

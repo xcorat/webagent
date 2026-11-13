@@ -3,6 +3,7 @@
   import { Trash2 } from "lucide-svelte";
   import { Badge } from "$lib/components/ui/badge";
   import { Button } from "$lib/components/ui/button";
+  import { ThemeSwitcher } from "$lib/components/ui/theme-switcher";
   import ChatContainer from "$lib/components/chat/ChatContainer.svelte";
   import PromptInput from "$lib/components/chat/PromptInput.svelte";
   import { chatStore } from "$lib/state/chat.svelte";
@@ -27,7 +28,8 @@
       {/if}
     </div>
 
-    <div class="flex items-center gap-2">
+    <div class="flex items-center gap-1.5">
+      <ThemeSwitcher />
       {#if chatStore.messages.length > 0}
         <Button
           variant="ghost"
