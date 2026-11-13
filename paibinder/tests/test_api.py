@@ -85,3 +85,28 @@ def test_health_and_chat_sse_stream(tmp_path: Path) -> None:
         assert "text_delta" in event_types
         assert "sources" in event_types
         assert event_types[-1] == "done"
+
+
+def test_static_ui_mount_serves_index_without_shadowing_api(
+    monkeypatch, tmp_path: Path
+) -> None:
+    ui_dir = tmp_path / "ui_build"
+    ui_dir.mkdir()
+    (ui_dir / "index.html").write_text("<html><body>WebAgent UI</body></html>", encoding="utf-8")
+    monkeypatch.setenv("UI_DIST_DIR", str(ui_dir))
+
+    cfg = BotConfig(
+        storage=StorageConfig(
+            docs_dir=str(tmp_path / "docs"),
+            store_db=str(tmp_path / "store.db"),
+        )
+    )
+    app = create_app(config=cfg, model_override=TestModel())
+
+    with TestClient(app) as client:
+        root_resp = client.get("/")
+        assert root_resp.status_code == 200
+        assert "WebAgent UI" in root_resp.text
+
+        health_resp = client.get("/health")
+        assert health_resp.status_code == 200

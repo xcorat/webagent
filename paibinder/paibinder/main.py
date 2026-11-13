@@ -6,11 +6,12 @@ import json
 import sqlite3
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+from pathlib import Path
 from typing import Any
 
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from pydantic_ai import Agent
 from pydantic_ai.messages import (
@@ -22,7 +23,7 @@ from pydantic_ai.messages import (
     TextPartDelta,
 )
 
-from paibinder.config import BotConfig, EnvSettings, load_config
+from paibinder.config import PACKAGE_ROOT, BotConfig, EnvSettings, load_config
 from paibinder.context.compiler import ChatMessage, compile_context
 from paibinder.models.provider import AgentDeps, create_agent, to_pydantic_history
 from paibinder.retrieval.docs import detect_search_backend
@@ -55,6 +56,19 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     yield
 
 
+def _resolve_ui_dir(env: EnvSettings) -> Path | None:
+    """Locate built static UI directory if present."""
+    if env.ui_dist_dir:
+        candidate = Path(env.ui_dist_dir).resolve()
+        return candidate if candidate.is_dir() else None
+    ui_root = PACKAGE_ROOT.parent / "ui"
+    for name in ("build", "dist"):
+        candidate = ui_root / name
+        if candidate.is_dir():
+            return candidate
+    return None
+
+
 def create_app(
     config: BotConfig | None = None,
     model_override: Any | None = None,
@@ -64,14 +78,6 @@ def create_app(
     application = FastAPI(title="paibinder", version="0.1.0", lifespan=lifespan)
     application.state.config = config
     application.state.model_override = model_override
-
-    application.add_middleware(
-        CORSMiddleware,
-        allow_origins=env.cors_origin_list,
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
 
     @application.get("/health")
     async def health(request: Request) -> JSONResponse:
@@ -190,6 +196,10 @@ def create_app(
                 "X-Accel-Buffering": "no",
             },
         )
+
+    ui_dir = _resolve_ui_dir(env)
+    if ui_dir is not None:
+        application.mount("/", StaticFiles(directory=ui_dir, html=True), name="ui")
 
     return application
 

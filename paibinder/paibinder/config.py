@@ -89,15 +89,7 @@ class EnvSettings(BaseSettings):
     )
 
     bot_config: str | None = Field(default=None, alias="BOT_CONFIG")
-    cors_origins: str = Field(
-        default="http://localhost:5173,http://127.0.0.1:5173",
-        alias="CORS_ORIGINS",
-    )
-
-    @property
-    def cors_origin_list(self) -> list[str]:
-        """Parse comma-separated CORS origins."""
-        return [o.strip() for o in self.cors_origins.split(",") if o.strip()]
+    ui_dist_dir: str | None = Field(default=None, alias="UI_DIST_DIR")
 
 
 def _find_config_file(explicit_path: Path | None, env_path: str | None) -> Path | None:
