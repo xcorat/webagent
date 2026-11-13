@@ -1,13 +1,40 @@
 # WebAgent
 
-A lightweight, cloneable agentic AI knowledge retriever and disseminator built with a modular Python context-engineering backend (`paibinder`) and a simple Svelte chat frontend (`ui`).
+A lightweight, cloneable agentic AI knowledge retriever and disseminator.
 
-## Repository Layout
+`webagent` keeps the engine strictly separate from per-bot knowledge and configuration, so a single codebase can power many specialized assistants.
 
-- `paibinder/` — Python AI Binder (context engineering engine, retrieval tools, model providers, HTTP API, serve static UI)
-- `ui/` — Svelte chat UI
-- `docs/` — Project documentation
+## Layout
 
-## Status
+- `paibinder/` — Python AI Binder (context compiler, retrieval tools, PydanticAI model wiring, FastAPI SSE API)
+- `ui/` — Svelte chat frontend
+- `docs/` — Architecture, configuration, and API documentation
 
-Bootstrapping project structure for `v0.1.0` (minimal chatbot).
+## Quickstart (`paibinder`)
+
+```bash
+cd paibinder
+python3 -m venv .venv
+.venv/bin/pip install -e ".[dev]"
+
+# Optional: configure API keys or local Ollama/OpenAI-compatible endpoint
+cp .env.example .env
+
+# Seed short-form knowledge blocks into SQLite FTS5
+.venv/bin/paibinder-seed --source ../../storage/store/sample-blocks.jsonl
+
+# Start the API server
+.venv/bin/uvicorn paibinder.main:app --reload --port 8000
+```
+
+Run the offline test suite:
+
+```bash
+cd paibinder && .venv/bin/pytest
+```
+
+See [docs/README.md](docs/README.md) for configuration, storage sets, and SSE API details.
+
+## License
+
+Licensed under the [GNU General Public License v3.0](LICENSE).
