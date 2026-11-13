@@ -90,6 +90,7 @@ class EnvSettings(BaseSettings):
 
     bot_config: str | None = Field(default=None, alias="BOT_CONFIG")
     ui_dist_dir: str | None = Field(default=None, alias="UI_DIST_DIR")
+    log_level: int = Field(default=0, alias="LOG_LEVEL")
 
 
 def _find_config_file(explicit_path: Path | None, env_path: str | None) -> Path | None:

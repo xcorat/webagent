@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import json
+import logging
+import os
 import sqlite3
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
@@ -46,6 +48,40 @@ def _summarize_tool_result(content: Any, limit: int = 240) -> str:
     return text[: limit - 3] + "..."
 
 
+logger = logging.getLogger("uvicorn.error")
+
+
+def _mask_secret(value: str | None) -> str:
+    """Return a masked preview of a secret (first 7 and last 4 chars)."""
+    if not value:
+        return "<unset>"
+    if len(value) <= 12:
+        return "***"
+    return f"{value[:7]}...{value[-4:]}"
+
+
+def _log_startup_config(cfg: BotConfig, env: EnvSettings) -> None:
+    """Log resolved config and masked API key prefixes when LOG_LEVEL > 0."""
+    if env.log_level <= 0:
+        return
+    logger.info(
+        "paibinder startup config: source=%s bot=%r model=%r base_url=%r temperature=%s docs_dir=%s store_db=%s",
+        cfg.config_source or "<defaults>",
+        cfg.bot.name,
+        cfg.model.name,
+        cfg.model.base_url,
+        cfg.model.temperature,
+        cfg.docs_path,
+        cfg.store_db_path,
+    )
+    logger.info(
+        "paibinder env keys: OPENAI_API_KEY=%s GEMINI_API_KEY=%s ANTHROPIC_API_KEY=%s",
+        _mask_secret(os.environ.get("OPENAI_API_KEY")),
+        _mask_secret(os.environ.get("GEMINI_API_KEY")),
+        _mask_secret(os.environ.get("ANTHROPIC_API_KEY")),
+    )
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     """Load BotConfig once at startup if not pre-configured by tests."""
@@ -53,6 +89,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         app.state.config = load_config()
     if not hasattr(app.state, "model_override"):
         app.state.model_override = None
+    _log_startup_config(app.state.config, EnvSettings())
     yield
 
 

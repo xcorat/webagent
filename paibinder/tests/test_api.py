@@ -110,3 +110,24 @@ def test_static_ui_mount_serves_index_without_shadowing_api(
 
         health_resp = client.get("/health")
         assert health_resp.status_code == 200
+
+
+def test_startup_verbose_logging_masks_api_key(monkeypatch, caplog, tmp_path: Path) -> None:
+    monkeypatch.setenv("LOG_LEVEL", "1")
+    monkeypatch.setenv("OPENAI_API_KEY", "sk-proj-1234567890abcdef")
+
+    cfg = BotConfig(
+        storage=StorageConfig(
+            docs_dir=str(tmp_path / "docs"),
+            store_db=str(tmp_path / "store.db"),
+        )
+    )
+    app = create_app(config=cfg, model_override=TestModel())
+
+    with caplog.at_level("INFO", logger="uvicorn.error"):
+        with TestClient(app):
+            pass
+
+    assert "sk-proj...cdef" in caplog.text
+    assert "sk-proj-1234567890abcdef" not in caplog.text
+
