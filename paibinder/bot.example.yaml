@@ -1,0 +1,23 @@
+bot:
+  name: "WebAgent"
+  persona: >
+    You are a helpful, accurate knowledge assistant. Answer questions using
+    only verified information from the connected knowledge base.
+
+model:
+  # Any PydanticAI model string: "openai:gpt-4o-mini", "google-gla:gemini-2.5-flash",
+  # "anthropic:claude-3-5-haiku-latest", or "ollama:llama3.2"
+  name: "openai:gpt-4o-mini"
+  # Optional base_url for OpenAI-compatible or local Ollama/vLLM servers
+  base_url: null
+  temperature: 0.2
+
+storage:
+  docs_dir: "../storage/docs"
+  store_db: "../storage/store/store.db"
+
+context:
+  max_history_turns: 10
+
+retrieval:
+  max_results: 5
