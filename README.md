@@ -33,7 +33,7 @@ Run the offline test suite:
 cd paibinder && .venv/bin/pytest
 ```
 
-See [docs/README.md](docs/README.md) for configuration, storage sets, and SSE API details.
+See [docs/INSTALL.md](docs/INSTALL.md) for custom project setup and upgrade workflows, and [docs/README.md](docs/README.md) for architecture and API details.
 
 ## License
 

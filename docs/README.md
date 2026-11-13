@@ -1,5 +1,7 @@
 # WebAgent Documentation
 
+See [INSTALL.md](INSTALL.md) for installation, custom project layout, and upgrading `webagent`.
+
 ## Architecture
 
 `webagent` separates shared engine code from instance-specific knowledge:
