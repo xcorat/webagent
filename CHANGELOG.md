@@ -18,6 +18,7 @@ Initial minimal, cloneable end-to-end chatbot release (`paibinder` + `ui`).
 - **Frontend (`ui`):**
   - Vite + Svelte 5 + Tailwind CSS v4 + `shadcn-svelte` chat interface (`App.svelte`, `ChatContainer`, `MessageBubble`, `PromptInput`, `ToolActivity`, `SourcesList`).
   - `ReadableStream` SSE client (`src/lib/api/client.ts`) and Svelte 5 rune store (`src/lib/state/chat.svelte.ts`) with `localStorage` thread persistence.
+  - Global theming (`src/themes/*.css`, `src/lib/state/theme.svelte.ts`, `ThemeSwitcher.svelte`) supporting colors, typography, radii, and surface shadows with `system`, `light`, `dark`, `paper`, `terminal`, and `ocean` presets plus `VITE_DEFAULT_THEME`.
   - Vite dev proxy for `/api/*` and `/health`, and static production build to `ui/dist/`.
 - **Documentation & Licensing:**
   - `README.md`, `docs/README.md`, `docs/INSTALL.md` (custom bot layouts & upgrade workflows), `paibinder/README.md`, `ui/README.md`, and `LICENSE` (GPL-3.0).
